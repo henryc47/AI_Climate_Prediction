@@ -12,8 +12,10 @@ month_names = ['January','February','March','April','May','June','July','August'
 def testing():
     elevation_path = 'data_sources/wc2.1_2.5m_elev.tif'
     sea_list,geo_df = extract_coordinates(elevation_path) #extract geographic coordinates
+    print(geo_df) #debug
     precipitation_path = 'data_sources/wc2.1_2.5m_prec/wc2.1_2.5m_prec_'
     precipitation_df = extract_data_by_month(sea_list,precipitation_path,'precipitation')
+    print(precipitation_df) #debug
     
 
 def extract_data_by_month(sea_list,path,data_name):
