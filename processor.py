@@ -7,19 +7,64 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
+month_names = ['January','February','March','April','May','June','July','August','September','October','November','December']
+
 def testing():
     elevation_path = 'data_sources/wc2.1_2.5m_elev.tif'
-    sea_list,geo_df = extract_coordinates(elevation_path)
-    print(geo_df)
+    sea_list,geo_df = extract_coordinates(elevation_path) #extract geographic coordinates
+    precipitation_path = 'data_sources/wc2.1_2.5m_prec/wc2.1_2.5m_prec_'
+    precipitation_df = extract_data_by_month(sea_list,precipitation_path,'precipitation')
     
 
+def extract_data_by_month(sea_list,path,data_name):
+    print('extracting ',data_name,' data')
+    #lists_data = []
+    df = pd.DataFrame()
+    #lists_names = []
+    for month in range(1,13):
+        month_name = month_names[month-1]
+        print('for ',month_name)
+        month_number = str(month)
+        if(len(month_number)==1):
+            month_number = "0" + month_number
+        file_path = path + month_number + ".tif"
+        tiff_array = Image.open(file_path) #load the tiff image file
+        np_array = np.array(tiff_array) #convert to a numpy array
+        np_array_height = np_array.shape[0] #total height of the array (latitude)
+        np_array_width = np_array.shape[1] #total length of the array (longitude)
+        sea_list_counter = 0
+        list_data = []
+        for i in tqdm(range(np_array_height)):
+            for j in range(np_array_width):
+                if sea_list[sea_list_counter]==True: #sea tile
+                    sea_list_counter = sea_list_counter + 1
+                    continue #we don't extract data from sea tiles in this model
+                else:
+                    sea_list_counter = sea_list_counter + 1
+                    data = np_array[i][j]
+                    list_data.append(float(data)) #explicit conversion to int/float needed for speed as otherwise data is stored in list as numpy array
+        new_data_name = data_name + '_' + month_name
+        #lists_data.append(list_data)
+        df[new_data_name] = list_data
+    print('all months finished, adding to dataframe')
+    return df
+
+    
+                        
+
+
+
+        
+        
+
+    
 
 #extract latitude, longitude and whether it is a sea tile from a tif file representing elevation
 def extract_coordinates(elevation_filepath):
     tiff_array = Image.open(elevation_filepath) #load the tiff image file
-    print("tiff array shape ",tiff_array.size, " type ",type(tiff_array))
+    #print("tiff array shape ",tiff_array.size, " type ",type(tiff_array))
     np_array = np.array(tiff_array) #convert to a numpy array
-    print("np array shape ",np_array.shape, " type ",type(np_array))
+    #print("np array shape ",np_array.shape, " type ",type(np_array))
     np_array_height = np_array.shape[0] #total height of the array (latitude)
     np_array_width = np_array.shape[1] #total length of the array (longitude)
     sea_list = [] #list of boolean values, false=not sea, true=sea. Same length as flattened array. Same access order as this functions extraction code
@@ -46,20 +91,6 @@ def extract_coordinates(elevation_filepath):
     geo_df = pd.DataFrame(list(zip(latitude_list,longitude_list,elevation_list)),columns=["Latitude","Longitude","Elevation"])
     #now export the data
     return sea_list,geo_df
-            
-    
-
-    
-
-    
-
-
-
-    
-
-
-
-
 
 if __name__ == "__main__":
     testing()
