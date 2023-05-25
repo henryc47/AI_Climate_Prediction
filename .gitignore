@@ -6,6 +6,10 @@ __pycache__/
 # C extensions
 *.so
 
+#data sources
+*.tif
+
+
 # Distribution / packaging
 .Python
 build/
