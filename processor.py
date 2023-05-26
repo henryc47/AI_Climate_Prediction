@@ -14,9 +14,20 @@ def testing():
     sea_list,geo_df = extract_coordinates(elevation_path) #extract geographic coordinates
     print(geo_df) #debug
     precipitation_path = 'data_sources/wc2.1_2.5m_prec/wc2.1_2.5m_prec_'
-    precipitation_df = extract_data_by_month(sea_list,precipitation_path,'precipitation')
+    precipitation_df = extract_precipitation_data(sea_list,precipitation_path)
     print(precipitation_df) #debug
     
+def extract_precipitation_data(sea_list,precipitation_filepath):
+    precipitation_df = extract_data_by_month(sea_list,precipitation_filepath,'precipitation')
+    #max = precipitation_df.max()
+    #min = precipitation_df.min()
+    #mean = precipitation_df.mean()
+    #print('max = ',max,' min = ',min,' mean = ',mean)
+    #max precipitation seems to be 2768 mm per month. Scale so 0=0, 3000mm=1
+    precipitation_df = precipitation_df/3000
+    return precipitation_df
+
+
 
 def extract_data_by_month(sea_list,path,data_name):
     print('extracting ',data_name,' data')
