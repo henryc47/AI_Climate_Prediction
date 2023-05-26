@@ -7,13 +7,16 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
+#global variables
 month_names = ['January','February','March','April','May','June','July','August','September','October','November','December']
+#filepaths
+elevation_path = 'data_sources/wc2.1_2.5m_elev.tif'
+precipitation_path = 'data_sources/wc2.1_2.5m_prec/wc2.1_2.5m_prec_'
+
 
 def testing():
-    elevation_path = 'data_sources/wc2.1_2.5m_elev.tif'
     sea_list,geo_df = extract_coordinates(elevation_path) #extract geographic coordinates
-    print(geo_df) #debug
-    precipitation_path = 'data_sources/wc2.1_2.5m_prec/wc2.1_2.5m_prec_'
+    print(geo_df) #debug    
     precipitation_df = extract_precipitation_data(sea_list,precipitation_path)
     print(precipitation_df) #debug
     
